@@ -49,6 +49,30 @@ FetchContent_Declare(
 )
 
 find_package(Vulkan REQUIRED)
+set(LODEPNG_DIR ${CMAKE_BINARY_DIR}/lodepng)
+if(NOT EXISTS ${LODEPNG_DIR}/lodepng.h)
+	file(MAKE_DIRECTORY ${LODEPNG_DIR})
+	file(DOWNLOAD
+		https://raw.githubusercontent.com/lvandeve/lodepng/master/lodepng.h
+		${LODEPNG_DIR}/lodepng.h
+		STATUS LODEPNG_H_STATUS
+	)
+	file(DOWNLOAD
+		https://raw.githubusercontent.com/lvandeve/lodepng/master/lodepng.cpp
+		${LODEPNG_DIR}/lodepng.cpp
+		STATUS LODEPNG_CPP_STATUS
+	)
+	list(GET LODEPNG_H_STATUS 0 LODEPNG_H_CODE)
+	list(GET LODEPNG_CPP_STATUS 0 LODEPNG_CPP_CODE)
+	if(NOT LODEPNG_H_CODE EQUAL 0)
+		message(FATAL_ERROR "Failed to download lodepng.h")
+	endif()
+	if(NOT LODEPNG_CPP_CODE EQUAL 0)
+		message(FATAL_ERROR "Failed to download lodepng.cpp")
+	endif()
+endif()
+target_include_directories(${PROJECT_NAME} PRIVATE ${LODEPNG_DIR})
+target_sources(${PROJECT_NAME} PRIVATE ${LODEPNG_DIR}/lodepng.cpp)
 
 set(GLFW_LIBRARY_TYPE STATIC)
 set(GLFW_BUILD_EXAMPLES OFF)

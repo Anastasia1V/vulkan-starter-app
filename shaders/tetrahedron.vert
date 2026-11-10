@@ -18,14 +18,19 @@ layout(std140, set = 1, binding = 0) uniform ModelData {
 
 layout(push_constant) uniform PipelineConsts {
     uint shader_flag;
+    uint texture_effect;
+    float time;
+    float effect_strength;
 } pipeline_consts;
 
 layout(location = 0) in vec3 inPosition;
 layout(location = 1) in vec3 inNormal;
 layout(location = 2) in vec3 inColor;
+layout(location = 3) in vec2 inCoord;
 layout(location = 0) out vec3 outWorldPosition;
 layout(location = 1) out vec3 outWorldNormal;
 layout(location = 2) out vec3 outColor;
+layout(location = 3) out vec2 outCoord;
 
 void main() {
     vec4 world_position = model_data.model_matrix * vec4(inPosition, 1.0);
@@ -33,4 +38,5 @@ void main() {
     outWorldPosition = world_position.xyz;
     outWorldNormal = transpose(inverse(mat3(model_data.model_matrix))) * inNormal;
     outColor = inColor;
+    outCoord = inCoord;
 }
